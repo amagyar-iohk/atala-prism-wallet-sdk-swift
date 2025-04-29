@@ -209,7 +209,11 @@ class EdgeAgentWorkflow {
         let sendProofMessage = try await edgeAgent.using(
             ability: DidcommAgentAbility.self,
             action: "make message"
-        ).didcommAgent.createPresentationForRequestProof(request: requestPresentationMessage, credential: credential!).makeMessage()
+        ).didcommAgent.createPresentationForRequestProof(
+            request: requestPresentationMessage,
+            credential: credential!,
+            options: [.disclosingClaims(claims: ["automation-required"])]
+        ).makeMessage()
         _ = try await edgeAgent.using(
             ability: DidcommAgentAbility.self,
             action: "send message"

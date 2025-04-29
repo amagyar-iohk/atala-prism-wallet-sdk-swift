@@ -177,25 +177,28 @@ extension CastorImpl: Castor {
             }
             guard let type = publicKeyJwk["kty"],
                   let encodedX = publicKeyJwk["x"],
-                  let encodedY = publicKeyJwk["y"],
                   let curve = publicKeyJwk["crv"]
             else {
                 throw CastorError.invalidJWKError
             }
 
-            guard let x = try? BaseEncoding.decode(encodedX, as: .base64Url).data.base64EncodedString(),
-                  let y = try? BaseEncoding.decode(encodedY, as: .base64Url).data.base64EncodedString()
-            else {
+            guard let x = try? BaseEncoding.decode(encodedX, as: .base64Url).data.base64EncodedString() else {
                 throw CastorError.invalidJWKError
             }
 
+            let y = try? publicKeyJwk["y"].map {
+                try BaseEncoding.decode($0, as: .base64Url).data.base64EncodedString()
+            }
+            
+            var dic = [
+                KeyProperties.type.rawValue: type,
+                KeyProperties.curvePointX.rawValue: x,
+                KeyProperties.curve.rawValue: curve
+            ]
+            y.map { dic[KeyProperties.curvePointY.rawValue] = $0 }
+            
             return try apollo.createPublicKey(
-                parameters: [
-                    KeyProperties.type.rawValue: type,
-                    KeyProperties.curvePointX.rawValue: x,
-                    KeyProperties.curvePointY.rawValue: y,
-                    KeyProperties.curve.rawValue: curve
-                ]
+                parameters: dic
             )
         case "EcdsaSecp256k1VerificationKey2019", "secp256k1":
             guard let multibaseData = method.publicKeyMultibase else {
