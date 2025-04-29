@@ -217,8 +217,6 @@ class EdgeAgentSteps: Steps {
             toDid: holderDid,
             claims: claims
         )
-        
-//         await EdgeAgentWorkflow.initiatePresentationRequest(verifierEdgeAgent, SDK.Domain.CredentialType.jwt, holderDID, claims)
     }
     
     @Step("{actor} will request {actor} to verify the anonymous credential")

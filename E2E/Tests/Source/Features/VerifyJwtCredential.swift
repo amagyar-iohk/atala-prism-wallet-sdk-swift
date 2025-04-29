@@ -23,8 +23,9 @@ final class VerifyJwt: Feature {
             .given("Cloud Agent is connected to Edge Agent")
             .and("Edge Agent has '1' jwt credentials issued by Cloud Agent")
             .when("Cloud Agent revokes '1' credentials")
-            .and("Verifier Edge Agent requests Edge Agent to verify the JWT credential")
-            .when("Edge Agent sends the present-proof")
+            .then("Edge Agent waits to receive the revocation notifications from Cloud Agent")
+            .when("Verifier Edge Agent requests Edge Agent to verify the JWT credential")
+            .and("Edge Agent sends the present-proof")
             .then("Verifier Edge Agent should see the verification proof is not verified")
     }
 }
